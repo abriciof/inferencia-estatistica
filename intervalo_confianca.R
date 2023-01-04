@@ -41,20 +41,20 @@ IC.media <- function(media, tam, sigma, conf=0.95){
 
 
 # Média das Variáveis Quantitativas
-media_Idade <- mean(df$IDADE)
-media_INR <- mean(df$INR)
-media_BILIR <- mean(df$BILIR..TOTAL)
-media_ALBUMINA <- mean(df$Albumina)
-media_CHILDPUGH1 <- mean(df$CHILD.PUGH..)
+# media_Idade <- mean(df$IDADE)
+# media_INR <- mean(df$INR)
+# media_BILIR <- mean(df$BILIR..TOTAL)
+# media_ALBUMINA <- mean(df$Albumina)
+# media_CHILDPUGH1 <- mean(df$CHILD.PUGH..)
 
 # Variáveis para a tabela
 variavel_quant <- c('Idade', 'INR', 'BILIR Total','Albumina', 'CHILD-PUGH.')
 
 # Média de todas
-media_quant <- c(media_Idade, media_INR, media_BILIR, media_ALBUMINA , media_CHILDPUGH1) 
+media_quant <- c(mean(df$IDADE), mean(df$INR), mean(df$BILIR..TOTAL), mean(df$Albumina), mean(df$CHILD.PUGH..))
 
 # Desvio Padrão de todas
-desvio_padrao_quant <- c(sd(df$IDADE),sd(df$INR),sd(df$BILIR..TOTAL),sd(df$Albumina),sd(df$CHILD.PUGH..))
+desvio_padrao_quant <- c(sd(df$IDADE), sd(df$INR), sd(df$BILIR..TOTAL) ,sd(df$Albumina), sd(df$CHILD.PUGH..))
 
 # Limite inferior do intervalo de confiança
 intervalo_confianca_quant_inf <- c(IC.media(media=media_Idade, tam=1308,sigma=sd(df$IDADE), conf=0.95)[1],
@@ -62,6 +62,9 @@ intervalo_confianca_quant_inf <- c(IC.media(media=media_Idade, tam=1308,sigma=sd
                                IC.media(media=media_BILIR, tam=1308,sigma=sd(df$BILIR..TOTAL), conf=0.95)[1],
                                IC.media(media=media_ALBUMINA, tam=1308,sigma=sd(df$Albumina), conf=0.95)[1],
                                IC.media(media=media_CHILDPUGH1, tam=1308,sigma=sd(df$CHILD.PUGH..), conf=0.95)[1])
+
+
+#intervalo_confianca_quant_inf2 <- c(IC.media(media=media_quant, tam=1308,sigma=sd(desvio_padrao_quant), conf=0.95)[1])
 
 # Limite superior do intervalo de confiança
 intervalo_confianca_quant_sup <- c(IC.media(media=media_Idade, tam=1308,sigma=sd(df$IDADE), conf=0.95)[2],
@@ -87,92 +90,39 @@ IC.proporcao <- function(qtde, total, conf=0.95){
   return(inter[1:2])
 }
 
-# Obtento a frequência de cara variável
-tags_sexo <- data.frame(table(df$SEXO))$Var1
-freq_sexo <- data.frame(table(df$SEXO))$Freq
+# Obtento a tag e a frequência de cara variável
+vars_quali <- data.frame(df$SEXO, df$Encefalopatia, df$Ascite ,df$CHILD.PUGH, df$HBeAg, df$Anti.HBe, df$a.HD.TOTAL)
+tag <- c()
+frequencia <- c()
 
-tags_encefalopatia <- data.frame(table(df$Encefalopatia))$Var1
-freq_encefalopatia <- data.frame(table(df$Encefalopatia))$Freq
-
-tags_ascite <- data.frame(table(df$Ascite))$Var1
-freq_ascite <- data.frame(table(df$Ascite))$Freq
-
-tags_CHILD_PUGH <- data.frame(table(df$CHILD.PUGH))$Var1
-freq_CHILD_PUGH <- data.frame(table(df$CHILD.PUGH))$Freq
-
-tags_HBeAg <- data.frame(table(df$HBeAg))$Var1
-freq_HBeAg <- data.frame(table(df$HBeAg))$Freq
-
-tags_AntiHBe <- data.frame(table(df$Anti.HBe))$Var1
-freq_AntiHBe <- data.frame(table(df$Anti.HBe))$Freq
-
-tags_aHD <- data.frame(table(df$a.HD.TOTAL))$Var1
-freq_aHD <- data.frame(table(df$a.HD.TOTAL))$Freq
+for (x in 1:length(vars_quali)) {
+  aux <- data.frame(table(vars_quali[x]))
+  
+  for (y in aux[1]) {
+    tag <- append(tag, y)
+  }
+  
+  for (z in aux[2]) {
+    frequencia <- append(frequencia, z)
+  }
+}
 
 # Variáveis para a tabela
-variavel_quali <- c('Sexo','Sexo', 
-                    'Encefalopatia','Encefalopatia','Encefalopatia', 
+variavel_quali <- c('Sexo','Sexo',
+                    'Encefalopatia','Encefalopatia','Encefalopatia',
                     'Ascite','Ascite','Ascite',
-                    'CHILP-PUGH','CHILP-PUGH','CHILP-PUGH', 
-                    'HBeAg','HBeAg', 
+                    'CHILP-PUGH','CHILP-PUGH','CHILP-PUGH',
+                    'HBeAg','HBeAg',
                     'AntiHBe','AntiHBe',
                     'aHD_Total','aHD_Total')
 
-# Etiqueta de cada variável
-tag <- c(tags_sexo[1],tags_sexo[2],
-         tags_encefalopatia[1], tags_encefalopatia[2], tags_encefalopatia[3],
-         tags_ascite[1],tags_ascite[2],tags_ascite[3],
-         tags_CHILD_PUGH[1],tags_CHILD_PUGH[2],tags_CHILD_PUGH[3],
-         tags_HBeAg[1],tags_HBeAg[2],
-         tags_AntiHBe[1],tags_AntiHBe[2],
-         tags_aHD[1],tags_aHD[2])
-
-# Frequência de todas
-frequencia <- c(freq_sexo[1],freq_sexo[2],
-                freq_encefalopatia[1], freq_encefalopatia[2], freq_encefalopatia[3],
-                freq_ascite[1],freq_ascite[2],freq_ascite[3],
-                freq_CHILD_PUGH[1],freq_CHILD_PUGH[2],freq_CHILD_PUGH[3],
-                freq_HBeAg[1],freq_HBeAg[2],
-                freq_AntiHBe[1],freq_AntiHBe[2],
-                freq_aHD[1],freq_aHD[2])
-
-# Limite inferior do intervalo de confiança
-intervalo_confianca_quali_inf <- c(IC.proporcao(frequencia[1], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[2], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[3], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[4], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[5], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[6], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[7], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[8], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[9], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[10], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[11], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[12], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[13], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[14], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[15], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[16], 1308, conf=0.95)[1],
-                                   IC.proporcao(frequencia[17], 1308, conf=0.95)[1])
-
-# Limite superior do intervalo de confiança
-intervalo_confianca_quali_sup <- c(IC.proporcao(frequencia[1], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[2], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[3], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[4], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[5], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[6], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[7], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[8], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[9], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[10], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[11], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[12], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[13], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[14], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[15], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[16], 1308, conf=0.95)[2],
-                                   IC.proporcao(frequencia[17], 1308, conf=0.95)[2])
+# Limite inferior e superior do intervalo de confiança
+intervalo_confianca_quali_inf <- c()
+intervalo_confianca_quali_sup <- c()
+for (x in frequencia) {
+  intervalo_confianca_quali_inf <- append(intervalo_confianca_quali_inf, IC.proporcao(x, 1308, conf=0.95)[1])
+  intervalo_confianca_quali_sup <- append(intervalo_confianca_quali_sup, IC.proporcao(x, 1308, conf=0.95)[2])
+}
 
 # Tabela Final das Variáveis Qualitativas
 tabela_intervalo_confianca_qualitativas <- data.frame(variavel_quali,tag,frequencia,
